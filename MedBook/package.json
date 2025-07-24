@@ -4,7 +4,7 @@
   "description": "MedBook - Medical Records Management System",
   "main": "rag-backend/server.js",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build && cd ../rag-backend && npm install",
+    "build": "cd frontend && npm ci && npm run build && cd ../rag-backend && npm ci",
     "start": "cd rag-backend && node server.js",
     "dev": "concurrently \"cd rag-backend && npm run dev\" \"cd frontend && npm run dev\"",
     "install-deps": "cd frontend && npm install && cd ../backend && npm install && cd ../rag-backend && npm install && cd ../backendvaibhav && npm install",
@@ -18,7 +18,7 @@
   "author": "PranjalAIDev",
   "license": "ISC",
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=18.0.0",
     "npm": ">=8.0.0"
   }
 }
