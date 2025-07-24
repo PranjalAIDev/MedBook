@@ -33,6 +33,28 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../frontend/dist')));
 }
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  const frontendPath = path.join(__dirname, '../frontend/dist/index.html');
+  const frontendExists = fs.existsSync(frontendPath);
+  
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    frontend_built: frontendExists,
+    frontend_path: frontendPath
+  });
+});
+
+// API health check
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'API OK',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Configure Multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -481,7 +503,24 @@ app.get("/api/documents", async (req, res) => {
 // Serve the frontend app for any non-API routes (in production)
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+    const frontendPath = path.join(__dirname, '../frontend/dist/index.html');
+    
+    // Check if the frontend build exists
+    if (fs.existsSync(frontendPath)) {
+      res.sendFile(frontendPath);
+    } else {
+      // If frontend build doesn't exist, send a simple message
+      res.status(503).send(`
+        <html>
+          <head><title>MedBook - Building</title></head>
+          <body>
+            <h1>MedBook Application</h1>
+            <p>The frontend is currently being built. Please try again in a few moments.</p>
+            <p>API endpoints are available at /api/*</p>
+          </body>
+        </html>
+      `);
+    }
   });
 }
 

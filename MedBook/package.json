@@ -4,7 +4,8 @@
   "description": "MedBook - Medical Records Management System",
   "main": "rag-backend/server.js",
   "scripts": {
-    "build": "cd frontend && npm ci && npm run build && cd ../rag-backend && npm ci",
+    "build": "cd frontend && npm install --legacy-peer-deps && npm run build && ls -la dist/ && cd ../rag-backend && npm install",
+    "build-windows": "cd frontend && npm install --legacy-peer-deps && npm run build && cd ../rag-backend && npm install",
     "start": "cd rag-backend && node server.js",
     "dev": "concurrently \"cd rag-backend && npm run dev\" \"cd frontend && npm run dev\"",
     "install-deps": "cd frontend && npm install && cd ../backend && npm install && cd ../rag-backend && npm install && cd ../backendvaibhav && npm install",
