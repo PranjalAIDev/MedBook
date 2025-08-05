@@ -54,7 +54,7 @@ const Chat4Health: React.FC = () => {
   const fetchDocuments = async () => {
     try {
       setConnectionError(null);
-      const response = await axios.get("http://localhost:5001/api/documents", { timeout: 5000 });
+      const response = await axios.get("/rag-api/documents", { timeout: 5000 });
       setDocuments(response.data);
 
       // Set all documents as active if we have documents but no active ones
@@ -107,7 +107,7 @@ const Chat4Health: React.FC = () => {
     formData.append("file", file);
 
     try {
-      const response = await axios.post("http://localhost:5001/api/upload", formData, {
+      const response = await axios.post("/rag-api/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -182,7 +182,7 @@ const Chat4Health: React.FC = () => {
 
     try {
       // Send query to RAG backend with all active documents
-      const response = await axios.post("http://localhost:5001/api/query", {
+      const response = await axios.post("/rag-api/query", {
         query: userQuery,
         documentIds: activeDocuments, // Send all active documents
       }, { timeout: 15000 });

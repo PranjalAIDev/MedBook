@@ -21,11 +21,11 @@ const ChatImageDisplay: React.FC<ChatImageDisplayProps> = ({
   // Make sure the URL is properly formatted
   const fullUrl = fileUrl.startsWith('http')
     ? fileUrl
-    : `http://localhost:5000${fileUrl.startsWith('/') ? '' : '/'}${fileUrl}`;
+    : `${fileUrl.startsWith('/') ? '' : '/'}${fileUrl}`;
 
   // Create a direct access URL as fallback
   const filename = fileUrl.split('/').pop();
-  const directUrl = `http://localhost:5000/api/files/direct/${filename}`;
+  const directUrl = `/api/files/direct/${filename}`;
 
   const handleImageLoad = () => {
     console.log('Image loaded successfully:', fullUrl);

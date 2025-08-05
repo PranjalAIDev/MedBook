@@ -1,41 +1,57 @@
 services:
-  # Frontend (Static Site)
-  - type: web
-    name: medbook-frontend
-    env: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-
-  # RAG Backend
-  - type: web
-    name: medbook-rag-backend
-    env: node
-    buildCommand: cd rag-backend && npm install
-    startCommand: cd rag-backend && npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        fromService:
-          type: web
-          name: medbook-rag-backend
-          property: port
-
-  # Main Backend  
+  # Main Backend for Users, Chat, etc.
   - type: web
     name: medbook-backend
     env: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    plan: free
+    buildCommand: cd backendvaibhav && npm install
+    startCommand: cd backendvaibhav && node server.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        fromService:
-          type: web
-          name: medbook-backend
-          property: port
+        value: 5000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URI
+        value: mongodb+srv://yashbudhia:khuljas1ms1m@cluster0.nnafmtq.mongodb.net/medbook-users
+      - key: COOKIE_SECRET
+        generateValue: true
+
+  # RAG Backend for AI features
+  - type: web
+    name: medbook-rag-backend
+    env: node
+    plan: free
+    buildCommand: cd rag-backend && npm install
+    startCommand: cd rag-backend && node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5001
+      - key: MONGO_URI
+        value: mongodb+srv://yashbudhia:khuljas1ms1m@cluster0.nnafmtq.mongodb.net/medbook-users
+      - key: GEMINI_API_KEY
+        value: AIzaSyDtQ9PYcrWUsx7u4SALmKgRftd9X-9hF00
+
+  # Frontend Static Site
+  - type: web
+    name: medbook-frontend
+    env: static
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    routes:
+      # Rewrite requests to the RAG backend
+      - type: rewrite
+        source: /rag-api/:path
+        destination: https://medbook-rag-backend.onrender.com/api/:path
+      # Rewrite requests to the main backend
+      - type: rewrite
+        source: /api/:path
+        destination: https://medbook-backend.onrender.com/api/:path
+      # Rewrite all other requests to the frontend's entry point
+      - type: rewrite
+        source: /*
+        destination: /index.html

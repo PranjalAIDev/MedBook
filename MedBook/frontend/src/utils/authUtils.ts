@@ -37,7 +37,7 @@ export const refreshToken = async (): Promise<string | null> => {
 
   try {
     const response = await axios.post(
-      'http://localhost:5000/api/auth/refresh-token',
+      '/api/auth/refresh-token',
       {},
       {
         headers: {
